@@ -1,6 +1,8 @@
 package com.att.dao.configurations;
 
 import com.att.data.configurations.ConfigValue;
+//import java.awt.List;
+import javax.print.attribute.HashAttributeSet;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,15 +36,26 @@ public class ConfigurationDao {
     }
 
     public List<ConfigValue> getConfigurationsForYearMonth(String yearMonth) {
-        return new ArrayList<>();
+        List<ConfigValue> list = new ArrayList<ConfigValue>();
+        
+        if(currentConfigurations.containsKey(yearMonth))
+            {
+                return currentConfigurations.get(yearMonth);
+            }
+            return new ArrayList<>();
     }
 
     public void addConfiguration(String yearMonth, ConfigValue value) {
         int newId = idProvider.getNextId();
-
+        ConfigValue newConfig = new ConfigValue();
+        newConfig.setConfigId(newId);
+        newConfig.setConfigName(value.getConfigName());
+        List<ConfigValue> list = new ArrayList<ConfigValue>();
+        list.add(value);
+        currentConfigurations.put(yearMonth,list);
     }
 
     public void removeAllConfigurationsForYearMonth(String yearMonth) {
-
+        currentConfigurations.remove(yearMonth); 
     }
 }
