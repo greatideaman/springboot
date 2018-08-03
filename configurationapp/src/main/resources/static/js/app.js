@@ -9,54 +9,61 @@
 
         document.getElementById('newButton').onclick = function() {
             var yearMonth = document.getElementById("timePeriod").value;
-            var configId = document.getElementById("configId").value;
-            document.getElementById("configId").value = ""
             var configName = document.getElementById("configName").value;
             document.getElementById("configName").value= "";
-             app.putData(yearMonth, configId, configName);                      
+             app.putData(yearMonth, configName);                      
         };
 
         document.getElementById('deleteButton').onclick = function() {
             var yearMonth = document.getElementById("timePeriod").value;
-             app.deleteData(yearMonth);                      
+             app.deleteData(true, yearMonth, null, null);                      
         };
     }
 
     function App() {
     }
 
-    App.prototype.putData = function(yearMonth, configId, configName) {
+    App.prototype.putData = function(yearMonth, configName) {
         var dTable = $('#configTable').DataTable();
-        var value = [ configName, configId ];
-        var valueJson = JSON.stringify({configValueIn: value});
-        dTable.clear().draw();
+        var JSONObject= {
+            'configId': 0,
+            'configName': configName
+        };
+    
         $.ajax({
-            contentType: "application/json; charset=utf-8",
-            type: "POST",
+            type: 'PUT',
             url: "/configuration/addConfigurationForYearMonth/"+yearMonth,
-            data: valueJson
-        }).then(function(data) {
-            dTable.row.add([
-                configId,
-                configName
-            ]).draw();
-        })
-    };
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(JSONObject),
+            async: true,
+            // success: function(result) {
+            //     alert('Result: ' + result);
+            // },
+            // error: function(jqXHR, textStatus, errorThrown) {
+            //     alert("error"+jqXHR.status + ' ' + jqXHR.responseText);
+            // }
+        }).then(function(configId) {
+                    dTable.row.add([
+                        configId,
+                        configName
+                    ]).draw();
+                })
+    } 
 
-    App.prototype.deletetData = function(yearMonth) {
+    App.prototype.deleteData = function(deleteAll,yearMonth, configId, configName) {
         var dTable = $('#configTable').DataTable();
-        dTable.clear().draw();
+        var JSONObject= {
+            'configId': configId,
+            'configName': configName
+        };
         $.ajax({
             type: "DELETE",
-            url: "/configuration/deleteConfigurationsForYearMonth/"+yearMonth
+            url: "/configuration/deleteConfigurationsForYearMonth/"+yearMonth+"/"+deleteAll,
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(JSONObject),
+            async: true,
         }).then(function(data) {
-            console.log("data: "+data);
-            $.each(data, function( index, configValue ) {
-                dTable.row.add([
-                    configValue.configId,
-                    configValue.configName
-                ]).draw();
-            });
+            if (deleteAll) dTable.clear().draw();
         })
     };
 
@@ -65,7 +72,7 @@
         dTable.clear().draw();
         $.ajax({
             type: "GET",
-            url: "/configuration/getConfigurationsForYearMonth/"+yearMonth
+            url: "configuration/getConfigurationsForYearMonth/"+yearMonth,
         }).then(function(data) {
             console.log("data: "+data);
             $.each(data, function( index, configValue ) {
@@ -79,13 +86,27 @@
 
     App.prototype.init = function() {
         $('#configTable').DataTable({
+            "columnDefs": [ {
+                "targets": 2,
+                "data": null,
+                "defaultContent": "<button>Delete</button>"
+            } ],
             scrollY: 300,
             paging: false,
             sorting: false,
             searching: false,
             info: false
         });
+        var dTable = $('#configTable').DataTable();
+        $('#configTable tbody').on( 'click', 'button', function () {
+            var data = dTable.row( $(this).parents('tr') ).data();
+            dTable.row( $(this).parents('tr') )
+            .remove()
+            .draw();
+            app.deleteData(false, document.getElementById("timePeriod").value, data[0], data[1]);
+        } );
     };
+
 
     window.app = new App;
 })($);
