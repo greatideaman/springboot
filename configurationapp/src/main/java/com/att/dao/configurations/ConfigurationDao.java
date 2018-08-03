@@ -1,12 +1,16 @@
 package com.att.dao.configurations;
 
 import com.att.data.configurations.ConfigValue;
+//import java.awt.List;
+import com.sun.org.apache.xpath.internal.operations.And;
+import javax.print.attribute.HashAttributeSet;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
 @Service
 public class ConfigurationDao {
@@ -34,15 +38,53 @@ public class ConfigurationDao {
     }
 
     public List<ConfigValue> getConfigurationsForYearMonth(String yearMonth) {
-        return new ArrayList<>();
+        List<ConfigValue> list = new ArrayList<ConfigValue>();
+        
+        if(currentConfigurations.containsKey(yearMonth))
+            {
+                return currentConfigurations.get(yearMonth);
+            }
+            return new ArrayList<>();
     }
 
-    public void addConfiguration(String yearMonth, ConfigValue value) {
+    public int addConfiguration(String yearMonth, ConfigValue value) {
         int newId = idProvider.getNextId();
-
+        value.setConfigId(newId);
+        List<ConfigValue> list = new ArrayList<ConfigValue>();
+        if (currentConfigurations.containsKey(yearMonth)) {
+            list = currentConfigurations.get(yearMonth);
+            list.add(value);
+        } else {      
+            list.add(value);
+        }
+        currentConfigurations.put(yearMonth,list);
+        return newId;
     }
 
     public void removeAllConfigurationsForYearMonth(String yearMonth) {
-
+        currentConfigurations.remove(yearMonth); 
     }
+
+    public void removeConfigurationsForYearMonth(String yearMonth, ConfigValue value) {
+        List<ConfigValue> list = new ArrayList<ConfigValue>();
+        if (currentConfigurations.containsKey(yearMonth)) {
+            list = currentConfigurations.get(yearMonth);
+            Iterator<ConfigValue> iterator = list.iterator();
+            List<ConfigValue> listAfter = new ArrayList<>();
+            while(iterator.hasNext()) {
+                ConfigValue next = iterator.next();
+                    if(next.getConfigId() ==  value.getConfigId() &&
+                        next.getConfigName().equals(value.getConfigName())) {
+                        
+                    } else {
+                        listAfter.add(next);
+                    }
+                }
+           
+            currentConfigurations.remove(yearMonth);
+            currentConfigurations.put(yearMonth,listAfter);
+        } 
+    }
+
+    
 }
