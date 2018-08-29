@@ -4,7 +4,7 @@ package com.att.data.configurations;
  * Data Model
  */
 public class ConfigValue {
-    private String configName;
+	private String configName;
     private int configId;
 
     public ConfigValue(String name, int id) {
@@ -31,4 +31,10 @@ public class ConfigValue {
     public int getConfigId() {
         return this.configId;
     }
+
+	@Override
+	public String toString() {
+		return "ConfigValue [configName=" + configName + ", configId=" + configId + "]";
+	}
+
 }
