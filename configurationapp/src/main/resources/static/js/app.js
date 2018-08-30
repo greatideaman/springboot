@@ -15,9 +15,15 @@
         $('#configTable').DataTable({
             scrollY: 300,
             paging: false,
-            sorting: false,
+            sorting: true,
+            ordering: true,
+            order: [],
             searching: false,
-            info: false
+            info: false,
+            columns: [
+            	 { "data": "configId" },
+                 { "data": "configName" },
+            	],           
         });
     };
 

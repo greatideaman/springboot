@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Configuration App</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="js/app.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
@@ -21,6 +21,10 @@
                 <option value="072018">Jul 2018</option>
             </select>
         </div>
+        <div class="controls">
+        	<label class="">* New Configuration:</label>
+			<input value="" type="text" size="30" maxlength="30" id="NewConfigName">
+        </div>        
         <div class="config-table-wrapper">
             <table id="configTable">
                 <thead>
@@ -36,12 +40,140 @@
         </div>
         <div class="controls">
             <button id="saveButton">Save Configurations</button>
+            <button id="delete4MonthYearButton">Delete Config. For Month Year</button>
+            <button id="deleteOneConfigButton">Delete Single Config</button>
         </div>
     </div>
     <script>
         $(document).ready(function() {
             app.init();
+            
+            $("#saveButton").click(function(){
+            	addNewConfiguration();
+            });
+            
+            $("#delete4MonthYearButton").click(function(){
+            	deleteConfig4MonthYear();
+            });
+            
+            $("#deleteOneConfigButton").click(function(){
+            	deleteOneConfig();
+            });
+            
+            $timePeriod = $("#timePeriod");
+        	$timePeriod.change (function() {
+       			getConfig4MonthYear();
+       		});
+        	
+        	//For selection de-selection
+            let table =  $('#configTable').DataTable();
+            $('#configTable tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            } );
         })
+        
+        function addNewConfiguration() {
+
+			let configName = $("#NewConfigName").val();
+		    if (configName.trim().length == 0) {
+		    	alert("Please enter a Configuration and then click Save button");
+		    	return;
+		    }
+		    
+		    let aConfig4Date = {}
+		    aConfig4Date["configName"] = configName;
+		
+		    $.ajax({
+		        type: "POST",
+		        contentType: "application/json",
+		        url: "configuration/addConfigurationForYearMonth/" + $timePeriod.val(),
+		        data: JSON.stringify(aConfig4Date),
+		        dataType: 'json',
+		        cache: false,
+		        timeout: 600000,
+		        success: function (data) {
+		            console.log("SUCCESS in addNewConfiguration " + data);
+		            getConfig4MonthYear();
+		        },
+	            error: function (data) {
+	                console.log("HIT error on addNewConfiguration" + JSON.stringify(data));	        	    
+	            }
+		    });
+
+		}
+        
+        function deleteConfig4MonthYear() {
+
+	        $.ajax({
+	            type: "DELETE",
+	            contentType: "application/json",
+	            url: "configuration/deleteConfigurationsForYearMonth/" + $timePeriod.val(),
+	            dataType: 'json',
+	            cache: false,
+	            timeout: 600000,
+	            success: function (data) {
+	                console.log("SUCCESS in deleteConfig4MonthYear", data);
+	                getConfig4MonthYear();
+	            },
+	            error: function (e) {
+	                console.log("HIT error on deleteConfig4MonthYear");	        	    
+	            }
+	        });
+
+		}
+        
+        function getConfig4MonthYear() {
+	        $.ajax({
+	            type: "GET",
+	            contentType: "application/json",
+	            url: "configuration/getConfigurationsForYearMonth/" + $timePeriod.val(),
+	            dataType: 'json',
+	            cache: false,
+	            timeout: 600000,
+	            success: function (data) {
+	                console.log("SUCCESS in getConfig4MonthYear : ", data);
+	                $elementTable = $('#configTable').DataTable();
+	        		$elementTable.clear();
+	        		$elementTable.rows.add(data);                
+	        		$elementTable.draw();
+	            },
+	            error: function (e) {
+	                console.log("HIT error on getConfig4MonthYear");	        	    
+	            }
+	        });
+        }
+        
+        function deleteOneConfig() {
+        	let selectedRow = $('#configTable').DataTable().row('.selected');
+
+        	if (selectedRow.data()) {
+    	        $.ajax({
+    	            type: "DELETE",
+    	            contentType: "application/json",
+    	            url: "configuration/deleteOneConfigForYearMonth/" + $timePeriod.val(),
+    	            data: JSON.stringify(selectedRow.data()),
+    	            dataType: 'json',
+    	            cache: false,
+    	            timeout: 600000,
+    	            success: function (data) {
+    	                console.log("SUCCESS in deleteOneConfig", data);
+    	                getConfig4MonthYear();
+    	            },
+    	            error: function (e) {
+    	                console.log("HIT error on deleteOneConfig");	        	    
+    	            }
+    	        });
+        	} else {
+        		alert("Please select a Configuration Row and then click Delete Single Config.");
+        	}
+        }
+        
+
     </script>
 </body>
 </html>
