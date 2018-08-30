@@ -41,6 +41,7 @@
         <div class="controls">
             <button id="saveButton">Save Configurations</button>
             <button id="delete4MonthYearButton">Delete Config. For Month Year</button>
+            <button id="deleteOneConfigButton">Delete Single Config</button>
         </div>
     </div>
     <script>
@@ -55,10 +56,25 @@
             	deleteConfig4MonthYear();
             });
             
+            $("#deleteOneConfigButton").click(function(){
+            	deleteOneConfig();
+            });
+            
             $timePeriod = $("#timePeriod");
         	$timePeriod.change (function() {
        			getConfig4MonthYear();
        		});
+        	
+        	//For selection de-selection
+            let table =  $('#configTable').DataTable();
+            $('#configTable tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            } );
         })
         
         function addNewConfiguration() {
@@ -131,6 +147,32 @@
 	            }
 	        });
         }
+        
+        function deleteOneConfig() {
+        	let selectedRow = $('#configTable').DataTable().row('.selected');
+
+        	if (selectedRow.data()) {
+    	        $.ajax({
+    	            type: "DELETE",
+    	            contentType: "application/json",
+    	            url: "configuration/deleteOneConfigForYearMonth/" + $timePeriod.val(),
+    	            data: JSON.stringify(selectedRow.data()),
+    	            dataType: 'json',
+    	            cache: false,
+    	            timeout: 600000,
+    	            success: function (data) {
+    	                console.log("SUCCESS in deleteOneConfig", data);
+    	                getConfig4MonthYear();
+    	            },
+    	            error: function (e) {
+    	                console.log("HIT error on deleteOneConfig");	        	    
+    	            }
+    	        });
+        	} else {
+        		alert("Please select a Configuration Row and then click Delete Single Config.");
+        	}
+        }
+        
 
     </script>
 </body>

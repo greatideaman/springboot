@@ -58,4 +58,21 @@ public class ConfigurationDao {
     public void removeAllConfigurationsForYearMonth(String yearMonth) {
     	currentConfigurations.remove(yearMonth);
     }
+    
+    public boolean deleteOneConfigForYearMonth(String yearMonth, ConfigValue value) {
+    	boolean result = false;
+    	List<ConfigValue> allConfigs4Date = currentConfigurations.get(yearMonth);
+		if (allConfigs4Date != null) {
+			for (int i = 0; i < allConfigs4Date.size(); i++) {
+				ConfigValue listConfigValue = allConfigs4Date.get(i);
+				if (listConfigValue.getConfigId() == value.getConfigId()) {
+					allConfigs4Date.remove(i);
+					result = true;
+					break;
+				}
+			}
+		}
+		
+		return result;
+    }
 }

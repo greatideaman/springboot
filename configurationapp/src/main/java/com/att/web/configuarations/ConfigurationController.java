@@ -64,4 +64,14 @@ public class ConfigurationController {
     		return true;
     }
     
+    @RequestMapping(value="deleteOneConfigForYearMonth/{yearMonthNumber}", method=RequestMethod.DELETE)
+    public boolean deleteOneConfigForYearMonth(
+    		@PathVariable("yearMonthNumber") String yearMonth,
+    		@RequestBody ConfigValue value) {
+    	
+    	log.debug("In deleteOneConfigForYearMonth " + yearMonth);
+    	log.debug(value.toString());
+    	return dao.deleteOneConfigForYearMonth(yearMonth, value);
+    }
+    
 }
