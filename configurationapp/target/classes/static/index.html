@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Configuration App</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="js/app.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+</head>
+<body>
+    <h1>Welcome To The Configuration App</h1>
+    <div class="content">
+        <div class="controls">
+            <select id="timePeriod">
+                <option value="012018">Jan 2018</option>
+                <option value="022018">Feb 2018</option>
+                <option value="032018">Mar 2018</option>
+                <option value="042018">Apr 2018</option>
+                <option value="052018">May 2018</option>
+                <option value="062018">Jun 2018</option>
+                <option value="072018">Jul 2018</option>
+            </select>
+            <input type="text" value="" placeholder="Add New Configuration Here" id="newConfig"/>
+        </div>
+        <div class="config-table-wrapper">
+            <table id="configTable">
+                <thead>
+                    <tr>
+                        <td>Configuration Id</td>
+                        <td>Configuration Name</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="controls">
+            <button id="saveButton">Save Configurations</button>
+            <button id="deleteButton">Delete Configurations</button>
+        </div>
+    </div>
+	<script>
+		$(document).ready(function() {
+			app.init();
+			$("#saveButton").click(function() {
+				addConfiguration();
+			});
+			
+			$("#timePeriod").change(function(){
+				getConfiguration();
+			});
+			
+			$("#deleteButton").click(function(){
+				deleteConfiguration();
+			});
+			
+			
+			var table = $('#configTable').DataTable();
+	        $('#configTable tbody').on( 'click', 'button', function () {
+	            var data = table.row( $(this).parents('tr') ).data();	
+	            table.row( $(this).parents('tr') )
+	            .remove()
+	            .draw();
+	            deleteSelectedConfiguration(data[0]);
+	            });     
+			
+		});
+
+		function addConfiguration() {
+
+			var newConfigName = $("#newConfig").val();
+			if (newConfigName === undefined) {
+				alert("Please enter a Configuration");
+				return;
+			}
+
+			var config = {
+				configName : newConfigName,
+				configId : 0
+			}
+
+			var selectedTime = $("#timePeriod option:selected").val();
+
+			$.ajax({
+				type : "POST",
+				contentType : "application/json",
+				url : "configuration/add/" + selectedTime,
+				data : JSON.stringify(config),
+				cache : false,
+				success : function(data) {
+					getConfiguration();
+				},
+				error : function(data) {
+					console.log("error:" + JSON.stringify(data));
+				}
+			});
+
+		}
+		
+		
+		function getConfiguration(){
+			var selectedTime = $("#timePeriod option:selected").val();
+			var dataTable = $('#configTable').DataTable();
+			dataTable.clear().draw();
+			$.ajax({
+				type : "GET",
+				contentType : "application/json",
+				url : "configuration/get/"+selectedTime,			
+				cache : false,
+				success: function (data) {
+					$.each(data, function(index, configValue) {
+						dataTable.row.add([
+		                    configValue.configId,
+		                    configValue.configName]).draw();
+					});
+					
+	            },
+	            error: function (e) {
+	                console.log("error:"+JSON.stringify(e));	        	    
+	            }
+			});			
+		}
+		
+		function deleteConfiguration(){
+			var selectedTime = $("#timePeriod option:selected").val();
+			$.ajax({
+				type : "DELETE",
+				contentType : "application/json",
+				url : "configuration/delete/"+selectedTime,			
+				cache : false,
+				success: function (data) {
+					getConfiguration();
+	            },
+	            error: function (e) {
+	                console.log("error:"+JSON.stringify(e));	        	    
+	            }
+			});				
+		}
+		
+		function deleteSelectedConfiguration(configId){
+			var selectedTime = $("#timePeriod option:selected").val();	
+			$.ajax({
+				type : "DELETE",
+				contentType : "application/json",
+				url : "configuration/delete/"+selectedTime+"/"+configId,			
+				cache : false,
+				success: function (data) {
+					getConfiguration();
+	            },
+	            error: function (e) {
+	                console.log("error:"+JSON.stringify(e));	        	    
+	            }
+			});				
+		}
+	</script>
+</body>
+</html>
