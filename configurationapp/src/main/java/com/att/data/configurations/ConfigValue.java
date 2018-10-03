@@ -1,9 +1,13 @@
 package com.att.data.configurations;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Data Model
  */
 public class ConfigValue {
+	
+	@NotNull(message = "config name must not be null")
     private String configName;
     private int configId;
 
