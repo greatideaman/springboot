@@ -4,7 +4,7 @@
     }
 
     App.prototype.getData = function() {
-        $.ajax('',{
+        $.ajax('http://localhost:9000/api/configuration/findBy/012018',{
 
         }).then(function(data) {
 

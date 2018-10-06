@@ -1,47 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Configuration App</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="js/app.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<title>Configuration App</title>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet"
+	href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="js/app.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 </head>
 <body>
-    <h1>Welcome To The Configuration App</h1>
-    <div class="content">
-        <div class="controls">
-            <select id="timePeriod">
-                <option value="012018">Jan 2018</option>
-                <option value="022018">Feb 2018</option>
-                <option value="032018">Mar 2018</option>
-                <option value="042018">Apr 2018</option>
-                <option value="052018">May 2018</option>
-                <option value="062018">Jun 2018</option>
-                <option value="072018">Jul 2018</option>
-            </select>
-        </div>
-        <div class="config-table-wrapper">
-            <table id="configTable">
-                <thead>
-                    <tr>
-                        <td>Configuration Id</td>
-                        <td>Configuration Name</td>
-                    </tr>
-                </thead>
-                <tbody>
+	<h1>Welcome To The Configuration App</h1>
+	<div class="content">
+		<div class="controls">
+			<select id="timePeriod">
+				<option value="012018">Jan 2018</option>
+				<option value="022018">Feb 2018</option>
+				<option value="032018">Mar 2018</option>
+				<option value="042018">Apr 2018</option>
+				<option value="052018">May 2018</option>
+				<option value="062018">Jun 2018</option>
+				<option value="072018">Jul 2018</option>
+			</select> <button id="deleteAllConfigurations">Delete All Configurations</button>
+		</div>
+		<div class="config-table-wrapper">
+			<table id="configTable">
+				<thead>
+					<tr>
+						<td>Configuration Id</td>
+						<td>Configuration Name</td>
+						<td>Action</td>
+					</tr>
+				</thead>
+				<tbody>
 
-                </tbody>
-            </table>
-        </div>
-        <div class="controls">
-            <button id="saveButton">Save Configurations</button>
-        </div>
-    </div>
-    <script>
+				</tbody>
+			</table>
+		</div>
+		<div class="controls">
+			<button id="create-configuration">Save Configurations</button>
+		</div>
+	</div>
+
+	<div id="mydialog">
+		<table cellpadding="2" cellspacing="2">
+			<tr>
+				<td>Name</td>
+				<td><input type="text" id="configureName"></td>
+			</tr>
+		</table>
+	</div>
+
+	<script>
         $(document).ready(function() {
+            
             app.init();
-        })
+
+            $.noConflict();     
+
+            pageLoad();
+
+            $('#deleteAllConfigurations').on('click', function() {
+            	var timePeriod = $('#timePeriod option:selected');
+            	var yearMonthNumber = timePeriod.val();
+            	$.ajax({
+					url: '/api/configuration/deleteall/' + yearMonthNumber, 
+					type: 'DELETE',
+					success: function(data) {
+						loadData('/api/configuration/findBy/' + yearMonthNumber);
+					}
+				});
+            });
+
+            $('#configTable tbody').on('click', 'button', function (){
+            	var configId = $(this).find('input').val();
+            	var timePeriod = $('#timePeriod option:selected');
+				var yearMonthNumber = timePeriod.val();
+            	$.ajax({
+					url: '/api/configuration/delete/' + configId + '/' + yearMonthNumber, 
+					type: 'DELETE',
+					success: function(data) {
+						loadData('/api/configuration/findBy/' + yearMonthNumber);
+					}
+				});
+            });
+            
+            $('#timePeriod').change(function() {
+            	var timePeriod = $('#timePeriod option:selected');
+				var yearMonthNumber = timePeriod.val();
+				loadData('/api/configuration/findBy/' + yearMonthNumber); 
+            });   
+            
+            $("#create-configuration").on("click", function() {
+            	var timePeriod = $('#timePeriod option:selected');
+				var yearMonthNumber = timePeriod.val();
+				var configName = $('#configureName').val();
+				$.ajax({
+					url: '/api/configuration/add/' + yearMonthNumber, 
+					type: 'POST',
+					dataType : 'json',
+					contentType : 'application/json',
+					data: JSON.stringify({"configName": configName}),
+					success: function(data) {
+						loadData('/api/configuration/findBy/' + yearMonthNumber);
+					}
+				});
+            });
+        });
+
+        function pageLoad() {
+        	var timePeriod = $('#timePeriod option:selected');
+			var yearMonthNumber = timePeriod.val();
+            loadData('/api/configuration/findBy/' + yearMonthNumber); 
+        }
+
+        function loadData(url) {
+        	var table = $("#configTable tbody");
+            $.ajax({
+                url: url,
+                method: "GET",
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data) {
+                    table.empty();
+                    $.each(data, function (a, b) {
+                        table.append('<tr><td>'+b.configId+'</td>' +
+                            '<td>'+b.configName+'</td><td><button type="button">Delete <input type="hidden" value="'+b.configId+'"></button></td></tr>');
+                    });
+                    
+                }
+            });
+        }
+        
     </script>
 </body>
 </html>
