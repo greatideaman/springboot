@@ -1,34 +1,63 @@
 package com.att.data.configurations;
 
 /**
- * Data Model
+ * Data Model - Configuration Value
  */
 public class ConfigValue {
-    private String configName;
-    private int configId;
+	private String configName;
+	private int configId;
 
-    public ConfigValue(String name, int id) {
-        this.configId = id;
-        this.configName = name;
-    }
+	/**
+	 * Constructor initialization with all properties.
+	 * 
+	 * @param name Configuration name
+	 * @param id   Configuration id
+	 */
+	public ConfigValue(String name, int id) {
+		this.configId = id;
+		this.configName = name;
+	}
 
-    public ConfigValue() {
+	/**
+	 * Default constructor.
+	 */
+	public ConfigValue() {
 
-    }
+	}
 
-    public void setConfigName(String name) {
-        this.configName = name;
-    }
+	/**
+	 * To set configuration name
+	 * 
+	 * @param name configuration name
+	 */
+	public void setConfigName(String name) {
+		this.configName = name;
+	}
 
-    public String getConfigName() {
-        return this.configName;
-    }
+	/**
+	 * To get configuration name
+	 * 
+	 * @return configuration name
+	 */
+	public String getConfigName() {
+		return this.configName;
+	}
 
-    public void setConfigId(int id) {
-        this.configId = id;
-    }
+	/**
+	 * To set configuration id.
+	 * 
+	 * @param name configuration id
+	 */
+	public void setConfigId(int id) {
+		this.configId = id;
+	}
 
-    public int getConfigId() {
-        return this.configId;
-    }
+	/**
+	 * To get configuration id
+	 * 
+	 * @return configuration id
+	 */
+	public int getConfigId() {
+		return this.configId;
+	}
 }
