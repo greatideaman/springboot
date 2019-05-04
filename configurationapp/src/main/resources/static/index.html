@@ -1,47 +1,204 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Configuration App</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="js/app.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<title>Configuration App</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script
+	src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="js/app.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 </head>
 <body>
-    <h1>Welcome To The Configuration App</h1>
-    <div class="content">
-        <div class="controls">
-            <select id="timePeriod">
-                <option value="012018">Jan 2018</option>
-                <option value="022018">Feb 2018</option>
-                <option value="032018">Mar 2018</option>
-                <option value="042018">Apr 2018</option>
-                <option value="052018">May 2018</option>
-                <option value="062018">Jun 2018</option>
-                <option value="072018">Jul 2018</option>
-            </select>
-        </div>
-        <div class="config-table-wrapper">
-            <table id="configTable">
-                <thead>
-                    <tr>
-                        <td>Configuration Id</td>
-                        <td>Configuration Name</td>
-                    </tr>
-                </thead>
-                <tbody>
+	<h1>Welcome To The Configuration App</h1>
+	<div class="content">
+		<div class="controls">
+			<label class="">Select Month for loading the configurations:</label>
+			<select id="timePeriod">
+				<option value="012018">Jan 2018</option>
+				<option value="022018">Feb 2018</option>
+				<option value="032018">Mar 2018</option>
+				<option value="042018">Apr 2018</option>
+				<option value="052018">May 2018</option>
+				<option value="062018">Jun 2018</option>
+				<option value="072018">Jul 2018</option>
+			</select>
+		</div>
+		<div class="controls">
+			<label class="">* New Configuration:</label> <input value=""
+				type="text" size="30" maxlength="30" id="NewConfigName">
+			<button id="saveButton">Save Configuration</button>
+		</div>
+		<div class="config-table-wrapper">
+			<table id="configTable">
+				<thead>
+					<tr>
+						<td>Configuration Id</td>
+						<td>Configuration Name</td>
+					</tr>
+				</thead>
+				<tbody>
 
-                </tbody>
-            </table>
-        </div>
-        <div class="controls">
-            <button id="saveButton">Save Configurations</button>
-        </div>
-    </div>
-    <script>
-        $(document).ready(function() {
-            app.init();
-        })
-    </script>
+				</tbody>
+			</table>
+		</div>
+		<div class="controls">
+			<button id="deleteForMonthYearButton">Delete All
+				Configurations for this Month Year</button>
+			<button id="deleteOneConfigButton">Delete Selected
+				Configuration</button>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			app.init();
+
+			$("#saveButton").click(function() {
+				addNewConfiguration();
+			});
+
+			$("#deleteForMonthYearButton").click(function() {
+				deleteConfigForMonthYear();
+			});
+
+			$("#deleteOneConfigButton").click(function() {
+				deleteOneConfig();
+			});
+
+			$timePeriod = $("#timePeriod");
+			$timePeriod.change(function() {
+				fetchConfigMonthYear();
+			});
+
+			let table = $('#configTable').DataTable();
+			$('#configTable tbody').on('click', 'tr', function() {
+				if ($(this).hasClass('selected')) {
+					$(this).removeClass('selected');
+				} else {
+					table.$('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+				}
+			});
+		})
+
+		function addNewConfiguration() {
+
+			let configName = $("#NewConfigName").val();
+			if (configName.trim().length == 0) {
+				alert("Configuration name can't be null or empty.");
+				return;
+			}
+
+			let configValue = {}
+			configValue["configName"] = configName;
+
+			$
+					.ajax({
+						type : "POST",
+						contentType : "application/json",
+						url : "configuration/" + $timePeriod.val(),
+						data : JSON.stringify(configValue),
+						dataType : 'json',
+						cache : false,
+						timeout : 600000,
+						success : function(data) {
+							if (data != null && data.msg.trim().length != 0) {
+								alert(data.msg);
+								console.log(data);
+							}
+							fetchConfigMonthYear();
+						},
+						error : function(data) {
+							console
+									.log("Oops!, Something went wrong unable to add new configuration."
+											+ JSON.stringify(data));
+						}
+					});
+
+		}
+
+		function deleteConfigForMonthYear() {
+
+			$
+					.ajax({
+						type : "DELETE",
+						contentType : "application/json",
+						url : "configuration/" + $timePeriod.val(),
+						dataType : 'json',
+						cache : false,
+						timeout : 600000,
+						success : function(data) {
+							if (data != null && data.msg.trim().length != 0) {
+								alert(data.msg);
+								console.log(data);
+							}
+							fetchConfigMonthYear();
+						},
+						error : function(e) {
+							console
+									.log("Oops!, Something went wrong unable to delete configurations."
+											+ JSON.stringify(e));
+						}
+					});
+
+		}
+
+		function fetchConfigMonthYear() {
+			$
+					.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : "configuration/" + $timePeriod.val(),
+						dataType : 'json',
+						cache : false,
+						timeout : 600000,
+						success : function(data) {
+							console
+									.log("Hola, Successfully fetched all configurations for selected month."
+											+ data);
+							$elementTable = $('#configTable').DataTable();
+							$elementTable.clear();
+							$elementTable.rows.add(data);
+							$elementTable.draw();
+						},
+						error : function(e) {
+							console
+									.log("Oops!, Something went wrong unable to fetch configurations.");
+						}
+					});
+		}
+
+		function deleteOneConfig() {
+			let selectedRow = $('#configTable').DataTable().row('.selected');
+
+			if (selectedRow.data()) {
+				var configId = selectedRow.data().configId;
+				$
+						.ajax({
+							type : "DELETE",
+							contentType : "application/json",
+							url : "configuration/" + $timePeriod.val() + "/"
+									+ configId,
+							dataType : 'json',
+							cache : false,
+							timeout : 600000,
+							success : function(data) {
+								if (data != null && data.msg.trim().length != 0) {
+									alert(data.msg);
+									console.log(data);
+								}
+								fetchConfigMonthYear();
+							},
+							error : function(e) {
+								console
+										.log("Oops!, Something went wrong unable to delete selected configuration."
+												+ JSON.stringify(e));
+							}
+						});
+			} else {
+				alert("Select a configuration from the above list to delete configurtion.");
+			}
+		}
+	</script>
 </body>
 </html>
