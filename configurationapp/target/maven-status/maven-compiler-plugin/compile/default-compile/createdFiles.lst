@@ -1,0 +1,8 @@
+com\att\dao\configurations\ConfigurationDao$IdProvider.class
+com\att\model\configurations\Configuration.class
+com\att\web\configuarations\ConfigurationController.class
+com\att\ConfigurationApp.class
+com\att\model\configurations\AjaxResponseBody.class
+com\att\dao\configurations\ConfigurationDao.class
+com\att\data\configurations\ConfigValue.class
+com\att\model\configurations\SearchCriteria.class
