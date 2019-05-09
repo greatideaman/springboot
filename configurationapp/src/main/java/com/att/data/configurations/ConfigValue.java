@@ -4,19 +4,31 @@ package com.att.data.configurations;
  * Data Model
  */
 public class ConfigValue {
+	private String yearMonth;
     private String configName;
     private int configId;
 
-    public ConfigValue(String name, int id) {
-        this.configId = id;
-        this.configName = name;
-    }
 
     public ConfigValue() {
 
     }
+    
+     public ConfigValue(String yearMonth, String configName, int configId) {
+		super();
+		this.yearMonth = yearMonth;
+		this.configName = configName;
+		this.configId = configId;
+	}
+     
+     public ConfigValue(String yearMonth, String configName, String configId) {
+		super();
+		this.yearMonth = yearMonth;
+		this.configName = configName;
+		this.configId = Integer.parseInt(configId);
+	}
+     
 
-    public void setConfigName(String name) {
+	public void setConfigName(String name) {
         this.configName = name;
     }
 
@@ -31,4 +43,14 @@ public class ConfigValue {
     public int getConfigId() {
         return this.configId;
     }
+
+	public String getYearMonth() {
+		return yearMonth;
+	}
+
+	public void setYearMonth(String yearMonth) {
+		this.yearMonth = yearMonth;
+	}
+    
+    
 }
