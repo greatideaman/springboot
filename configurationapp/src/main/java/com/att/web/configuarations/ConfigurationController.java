@@ -60,7 +60,7 @@ public class ConfigurationController {
         }
     }
 
-    @RequestMapping(value = "/{yearMonthNumber}", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/{yearMonthNumber}", method = {RequestMethod.POST})
     public void addConfigurationForYearMonth(
             @PathVariable("yearMonthNumber") String yearMonth,
             @RequestBody ConfigValue value) {
