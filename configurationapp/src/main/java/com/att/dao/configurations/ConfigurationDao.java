@@ -1,15 +1,17 @@
 package com.att.dao.configurations;
 
 import com.att.data.configurations.ConfigValue;
+import com.att.web.configuarations.ConfigurationController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ConfigurationDao {
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationDao.class);
+
     private class IdProvider {
         private int currentId;
 
@@ -33,16 +35,80 @@ public class ConfigurationDao {
         currentConfigurations = new HashMap<>();
     }
 
+    public void addConfigurationforYearMonth(String yearMonth, ConfigValue value) {
+        try {
+
+            if (value != null && !isNullOrEmpty(yearMonth)) {
+                value.setConfigId(idProvider.getNextId());
+
+                List<ConfigValue> configurationList = currentConfigurations.get(yearMonth);
+                if (configurationList != null) {
+                    Optional<ConfigValue> existingConfigValue = configurationList
+                            .stream()
+                            .filter(data -> data.getConfigName().equals(value.getConfigName()))
+                            .findFirst();
+
+                    if (!existingConfigValue.isPresent()) {
+                        configurationList.add(value);
+                        currentConfigurations.put(yearMonth, configurationList);
+                    }
+
+                } else {
+                    configurationList = new ArrayList<ConfigValue>();
+                    configurationList.add(value);
+                    currentConfigurations.put(yearMonth, configurationList);
+                }
+
+            }
+
+        } catch (Exception e) {
+            logger.error("Exception adding configuration for selected year and month. Class :: " + this.getClass().getName());
+
+        }
+
+    }
+
+
     public List<ConfigValue> getConfigurationsForYearMonth(String yearMonth) {
+        try {
+            if (isConfigExist(yearMonth) && !isNullOrEmpty(yearMonth)) {
+                return currentConfigurations.get(yearMonth);
+            }
+        } catch (Exception e) {
+            logger.error("Error getching configurations for selected year and month. " + this.getClass().getName());
+        }
         return new ArrayList<>();
     }
 
-    public void addConfiguration(String yearMonth, ConfigValue value) {
-        int newId = idProvider.getNextId();
+
+    public void deleteAllConfigurationsForYearMonth(String yearMonth) {
+
+        try {
+            if (!isNullOrEmpty(yearMonth)) {
+                currentConfigurations.remove(yearMonth);
+            }
+        } catch (Exception e) {
+            logger.error("Error deleting config for year and month " + e.getMessage());
+        }
 
     }
 
-    public void removeAllConfigurationsForYearMonth(String yearMonth) {
+    public void deleteSelectedConfigForYearMonth(String yearMonth, int configId) {
+        try {
+            if (!isNullOrEmpty(yearMonth) && isConfigExist(yearMonth)) {
+                currentConfigurations.get(yearMonth).removeIf(it -> it.getConfigId() == configId);
+            }
+        } catch (Exception e) {
+            logger.error("Error deleting selected config for year and month. " + e.getMessage());
+        }
+    }
 
+    public static boolean isNullOrEmpty(String str) {
+        return !(str != null && !str.trim().isEmpty());
+
+    }
+
+    private boolean isConfigExist(String key) {
+        return currentConfigurations.containsKey(key);
     }
 }
