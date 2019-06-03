@@ -42,7 +42,7 @@ public class ConfigurationDao {
                 value.setConfigId(idProvider.getNextId());
 
                 List<ConfigValue> configurationList = currentConfigurations.get(yearMonth);
-                if (configurationList != null) {
+                if (isConfigExist(yearMonth)) {
                     Optional<ConfigValue> existingConfigValue = configurationList
                             .stream()
                             .filter(data -> data.getConfigName().equals(value.getConfigName()))
@@ -62,7 +62,7 @@ public class ConfigurationDao {
             }
 
         } catch (Exception e) {
-            logger.error("Exception adding configuration for selected year and month. Class :: " + this.getClass().getName());
+            logger.error("Exception adding configuration for selected year and month. " + e.getMessage());
 
         }
 
@@ -75,7 +75,7 @@ public class ConfigurationDao {
                 return currentConfigurations.get(yearMonth);
             }
         } catch (Exception e) {
-            logger.error("Error getching configurations for selected year and month. " + this.getClass().getName());
+            logger.error("Error fetching configurations for selected year and month. " + e.getMessage());
         }
         return new ArrayList<>();
     }
