@@ -59,9 +59,7 @@ public class ConfigurationDao {
             }
         } catch (Exception e) {
             logger.error("Exception adding configuration for selected year and month. " + e.getMessage());
-
         }
-
     }
 
 
@@ -86,7 +84,6 @@ public class ConfigurationDao {
         } catch (Exception e) {
             logger.error("Error deleting config for year and month " + e.getMessage());
         }
-
     }
 
     public void deleteSelectedConfigForYearMonth(String yearMonth, int configId) {
@@ -101,7 +98,6 @@ public class ConfigurationDao {
 
     public static boolean isNullOrEmpty(String str) {
         return !(str != null && !str.trim().isEmpty());
-
     }
 
     private boolean isConfigExist(String key) {
