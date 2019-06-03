@@ -37,7 +37,6 @@ public class ConfigurationDao {
 
     public void addConfigurationforYearMonth(String yearMonth, ConfigValue value) {
         try {
-
             if (value != null && !isNullOrEmpty(yearMonth)) {
                 value.setConfigId(idProvider.getNextId());
 
@@ -52,15 +51,12 @@ public class ConfigurationDao {
                         configurationList.add(value);
                         currentConfigurations.put(yearMonth, configurationList);
                     }
-
                 } else {
                     configurationList = new ArrayList<ConfigValue>();
                     configurationList.add(value);
                     currentConfigurations.put(yearMonth, configurationList);
                 }
-
             }
-
         } catch (Exception e) {
             logger.error("Exception adding configuration for selected year and month. " + e.getMessage());
 
