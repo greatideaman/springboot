@@ -3,10 +3,7 @@ package com.att.dao.configurations;
 import com.att.data.configurations.ConfigValue;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ConfigurationDao {
@@ -34,15 +31,24 @@ public class ConfigurationDao {
     }
 
     public List<ConfigValue> getConfigurationsForYearMonth(String yearMonth) {
-        return new ArrayList<>();
+        if(null == currentConfigurations.get(yearMonth)) {
+            return new ArrayList<>();
+        }
+        return currentConfigurations.get(yearMonth);
     }
 
     public void addConfiguration(String yearMonth, ConfigValue value) {
-        int newId = idProvider.getNextId();
-
+        List<ConfigValue> adding = new ArrayList<>();
+        if(currentConfigurations.containsKey(yearMonth)) {
+            adding = currentConfigurations.get(yearMonth);
+            adding.add(new ConfigValue(value.getConfigName(),idProvider.getNextId()));
+        } else {
+            adding.add(new ConfigValue(value.getConfigName(),idProvider.getNextId()));
+        }
+        currentConfigurations.put(yearMonth, adding);
     }
 
     public void removeAllConfigurationsForYearMonth(String yearMonth) {
-
+        currentConfigurations = new HashMap<>();
     }
 }
