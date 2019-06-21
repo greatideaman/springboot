@@ -2,46 +2,116 @@
 <html>
 <head>
     <title>Configuration App</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="js/app.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    <script>
+        $(document).ready(function () {
+            app.init();
+            getConfigurationsForYearMonth();
+            $("#saveButton").click(function () {
+                addDeleteConfiguration("POST", true);
+            });
+
+            $("#deleteAll").click(function () {
+                addDeleteConfiguration("DELETE", false);
+            });
+
+            $("#timePeriod").onchange(function () {
+                getConfigurationsForYearMonth();
+            });
+        })
+
+        function addDeleteConfiguration(method, add) {
+            var newConfig = $("#newConfig").val();
+
+            if (add) {
+                if (0 == newConfig.trim().length) {
+                    alert("Config missing, unable to add empty config");
+                    return;
+                }
+            }
+
+            var configValue = {}
+            configValue["configName"] = newConfig;
+
+            $.ajax({
+                url: "../configuration/" + $('#timePeriod option:selected').val(),
+                contentType: "application/json",
+                dataType: 'json',
+                type: method,
+                data: JSON.stringify(configValue),
+                success: function (data) {
+                    getConfigurationsForYearMonth();
+                },
+                error: function (data) {
+                    alert("Unable to add new configuration." + JSON.stringify(data));
+                    console.log("Unable to add new configuration." + JSON.stringify(data));
+                }
+            });
+        }
+
+        function getConfigurationsForYearMonth() {
+            $.ajax({
+                url: "../configuration/" + $('#timePeriod option:selected').val(),
+                contentType: "application/json",
+                dataType: 'json',
+                type: "GET",
+                success: function (data) {
+                    console.log("value : " + data);
+                    var $configTempTable = $('#configTable').DataTable();
+                    $configTempTable.clear();
+                    $configTempTable.rows.add(data);
+                    $configTempTable.draw();
+                },
+                error: function (data) {
+                    console.log("Unable to display data." + JSON.stringify(data));
+                }
+            })
+        }
+    </script>
 </head>
 <body>
-    <h1>Welcome To The Configuration App</h1>
-    <div class="content">
-        <div class="controls">
-            <select id="timePeriod">
-                <option value="012018">Jan 2018</option>
-                <option value="022018">Feb 2018</option>
-                <option value="032018">Mar 2018</option>
-                <option value="042018">Apr 2018</option>
-                <option value="052018">May 2018</option>
-                <option value="062018">Jun 2018</option>
-                <option value="072018">Jul 2018</option>
-            </select>
-        </div>
-        <div class="config-table-wrapper">
-            <table id="configTable">
-                <thead>
-                    <tr>
-                        <td>Configuration Id</td>
-                        <td>Configuration Name</td>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
-        <div class="controls">
-            <button id="saveButton">Save Configurations</button>
-        </div>
+<h1>Welcome To The Configuration App</h1>
+<div class="content">
+    <div class="controls">
+        <select id="timePeriod" onChange="getConfigurationsForYearMonth()">
+            <option value="012018">Jan 2018</option>
+            <option value="022018">Feb 2018</option>
+            <option value="032018">Mar 2018</option>
+            <option value="042018">Apr 2018</option>
+            <option value="052018">May 2018</option>
+            <option value="062018">Jun 2018</option>
+            <option value="072018">Jul 2018</option>
+        </select>
     </div>
-    <script>
-        $(document).ready(function() {
-            app.init();
-        })
-    </script>
+    <div class="controls">
+        <table>
+            <tr>
+                <td><label class="">New Configuration Name:</label></td>
+                <td><input value="" type="text" size="30" maxlength="30" id="newConfig"></td>
+            </tr>
+            <tr>
+                <td align="right"><button id="saveButton">Save Configurations</button></td>
+                <td><button id="deleteAll">Delete all Configurations</button></td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="config-table-wrapper">
+        <table id="configTable">
+            <thead>
+            <tr>
+                <td>Configuration Id</td>
+                <td>Configuration Name</td>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
 </body>
 </html>

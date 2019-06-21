@@ -12,6 +12,7 @@ import java.util.List;
 @RequestMapping(value="/configuration")
 public class ConfigurationController {
 
+    @Autowired
     private ConfigurationDao dao;
 
     @Autowired
@@ -23,23 +24,21 @@ public class ConfigurationController {
     @ResponseBody
     public List<ConfigValue> getConfigurationsForYearMonth(
             @PathVariable("yearMonthNumber") String yearMonth) {
-
-        return new ArrayList<>();
+        ;
+        return dao.getConfigurationsForYearMonth(yearMonth);
     }
 
     @RequestMapping(value="/{yearMonthNumber}", method=RequestMethod.DELETE)
-    public void deleteConfigurationsForYearMonth(@PathVariable("yearMonthNumber") String yearMonth) {
-        try {
-
-        } catch (Exception ex) {
-
-        }
+    public String deleteConfigurationsForYearMonth(@PathVariable("yearMonthNumber") String yearMonth) {
+        dao.removeAllConfigurationsForYearMonth(yearMonth);
+        return "{\"Status\":\"SUCCESS\"}";
     }
 
     @RequestMapping(value="/{yearMonthNumber}", method={ RequestMethod.POST, RequestMethod.PUT })
-    public void addConfigurationForYearMonth(
+    public String addConfigurationForYearMonth(
             @PathVariable("yearMonthNumber") String yearMonth,
             @RequestBody ConfigValue value) {
-
+        dao.addConfiguration(yearMonth, value);
+        return "{\"Status\":\"SUCCESS\"}";
     }
 }

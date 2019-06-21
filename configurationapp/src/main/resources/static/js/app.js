@@ -17,7 +17,11 @@
             paging: false,
             sorting: false,
             searching: false,
-            info: false
+            info: false,
+            columns: [
+                { "data": "configId" },
+                { "data": "configName" },
+            ]
         });
     };
 
