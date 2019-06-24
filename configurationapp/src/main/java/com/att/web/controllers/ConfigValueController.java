@@ -1,8 +1,10 @@
-package com.att.web.configuarations;
+package com.att.web.controllers;
 
 import com.att.dao.configurations.ConfigurationDao;
 import com.att.data.configurations.ConfigValue;
+import com.att.repositories.ConfigValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,22 +12,33 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value="/configuration")
-public class ConfigurationController {
+public class ConfigValueController {
 
-    private ConfigurationDao dao;
+    //private ConfigurationDao dao;
+    private ConfigValueRepository configValueRepository;
 
-    @Autowired
-    public ConfigurationController(ConfigurationDao dao) {
-        this.dao = dao;
+
+    public ConfigValueController (ConfigValueRepository configValueRepository) {
+        this.configValueRepository = configValueRepository;
     }
+
+//    @Autowired
+//    public ConfigValueController(ConfigurationDao dao) {
+//        this.dao = dao;
+//    }
 
     @RequestMapping(value="/{yearMonthNumber}", method=RequestMethod.GET)
-    @ResponseBody
-    public List<ConfigValue> getConfigurationsForYearMonth(
-            @PathVariable("yearMonthNumber") String yearMonth) {
+    public String getConfigValues(Model model) {
+        model.addAttribute("configValues", configValueRepository.findAll());
 
-        return new ArrayList<>();
+        return "index";
     }
+//    @ResponseBody
+//    public List<ConfigValue> getConfigurationsForYearMonth(
+//            @PathVariable("yearMonthNumber") String yearMonth) {
+//
+//        return new ArrayList<>();
+//    }
 
     @RequestMapping(value="/{yearMonthNumber}", method=RequestMethod.DELETE)
     public void deleteConfigurationsForYearMonth(@PathVariable("yearMonthNumber") String yearMonth) {

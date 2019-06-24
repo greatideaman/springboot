@@ -14,8 +14,10 @@
     App.prototype.init = function() {
         $('#configTable').DataTable({
             scrollY: 300,
-            paging: false,
-            sorting: false,
+            paging: true,
+            sorting: true,
+            ordering: true,
+            select: true,
             searching: false,
             info: false
         });
