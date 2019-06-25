@@ -17,12 +17,5 @@ import java.util.List;
 @Repository
 public interface ConfigvaluesRepository extends DataTablesRepository<Configvalues, Integer> {
 
-
-    // TODO - CLEAN THIS UP
-//    List<ConfigValue> findByConfigID( int ConfigID);
-//    List<ConfigValue> findByConfigDate( String configDate);
-//    void deleteConfigValuesByConfigDate( String configDate);
     void deleteAllByConfigDate(String configDate);
-//    void deleteByConfigID(int configID);
-
 }

@@ -75,7 +75,7 @@
         </tr>
 </form>
 
-<h2> To Delete a Configuration for a Selected Month</h2>
+<h2> To Delete ALL Configurations for a Selected Month</h2>
 <form action="/delete/${ConfigDate}" method="post">
 <tr>
     <td>
@@ -92,6 +92,22 @@
     <td>
     <button id="deleteButton" input type="submit">Delete Configurations</button>
     </td></tr></form>
+
+<h2> To Delete a SINGLE Configuration</h2>
+<form action="/deleteSingle/${ConfigID}" method="post">
+    <tr>
+        <td>
+            <label >Config ID:</label>
+            <input  id="ConfigID" name="ConfigID" type="text" >
+
+        </td><td>
+        <td>
+            <button id="deleteButtonSingle" input type="submit">Delete 1 Configuration</button>
+        </td></tr></form>
+
+
+
+
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

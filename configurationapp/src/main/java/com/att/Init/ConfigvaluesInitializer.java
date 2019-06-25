@@ -24,9 +24,6 @@ class ConfigvaluesInitializer {
     @PostConstruct
     public void init() {
         log.info("generating {} random employees", NUMBER_TO_GENERATE);
-        // TODO CLEAN-UP THIS
-        //Random randomGenerator = new Random();
-        //Faker faker = new Faker();
 
         ArrayList<String> arrayList = new ArrayList<String>();
         arrayList.add("A");
