@@ -49,33 +49,30 @@
 
 <h2> To Add a Configuration</h2>
 
-<form action="/action_page.php">
+<form action="/add/${ConfigDate1}/${ConfigName1}" method="post">
 
     <tr>
         <td>
 
-        <select id="timePeriodSave">
-            <option value="012018">Jan 2019</option>
-            <option value="022018">Feb 2019</option>
-            <option value="032018">Mar 2019</option>
-            <option value="042018">Apr 2019</option>
-            <option value="052018">May 2019</option>
-            <option value="062018">Jun 2019</option>
-            <option value="072018">Jul 2019</option>
+        <select id="ConfigDate1" name="ConfigDate1">
+            <option value="012019">Jan 2019</option>
+            <option value="022019">Feb 2019</option>
+            <option value="032019">Mar 2019</option>
+            <option value="042019">Apr 2019</option>
+            <option value="052019">May 2019</option>
+            <option value="062019">Jun 2019</option>
+            <option value="072019">Jul 2019</option>
+            <option value="122020">Dec 2020</option>
         </select>
         </td>
         <td>
         <label >Config Name:</label>
-        <input name="configName" type="text" >
+        <input  id="ConfigName1" name="ConfigName1" type="text" >
 
     </td><td>
-
-        <button id="saveButton">Save Configurations</button>
-
+        <button id="saveButton" input type="submit">Save Configurations</button>
     </td>
-
         </tr>
-
 </form>
 
 <h2> To Delete a Configuration for a Selected Month</h2>

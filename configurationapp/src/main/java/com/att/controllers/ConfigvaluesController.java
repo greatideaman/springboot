@@ -28,7 +28,8 @@ public class ConfigvaluesController {
         return configvaluesRepository.findAll(input);
     }
 
-    @Transactional
+    // DELETION OF CONFIGS BY CONFIG DATE VALUE
+    @Transactional // REQUIRED by Spring or will get Entity errors
     @RequestMapping(value = "/delete/{ConfigDate}", method = RequestMethod.POST)
     public RedirectView deleteConfig (@RequestParam String ConfigDate) {
         configvaluesRepository.deleteAllByConfigDate(ConfigDate);
@@ -36,6 +37,31 @@ public class ConfigvaluesController {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(("http://localhost:9000/index.html"));
         return redirectView;
+    }
+
+        // ADDITION OF A CONFIG
+        @Transactional // REQUIRED by Spring or will get Entity errors
+        @RequestMapping(value = "/add/{ConfigDate1}/{ConfigName1}", method = RequestMethod.POST)
+        public RedirectView addConfig (@RequestParam String ConfigDate1, String ConfigName1) {
+            int newID = (((int) configvaluesRepository.count()) + 1);
+            Configvalues configvalues = Configvalues.builder()
+                    .configID(newID)
+                    .configName(ConfigName1)
+                    .configDate(ConfigDate1)
+                    .build();
+            configvaluesRepository.save(configvalues);
+
+            System.out.println(" ########## ADDED FOR " + configvalues.toString() + "  ############## ");
+            RedirectView redirectView = new RedirectView();
+            redirectView.setUrl(("http://localhost:9000/index.html"));
+            return redirectView;
+
+
+
+
+
+
+
 
 
 //        // DELETE to delete a single config in a month
