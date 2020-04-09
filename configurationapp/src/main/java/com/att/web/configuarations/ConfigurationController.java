@@ -22,24 +22,26 @@ public class ConfigurationController {
     @RequestMapping(value="/{yearMonthNumber}", method=RequestMethod.GET)
     @ResponseBody
     public List<ConfigValue> getConfigurationsForYearMonth(
-            @PathVariable("yearMonthNumber") String yearMonth) {
-
-        return new ArrayList<>();
+            @PathVariable("yearMonthNumber") String yearMonth)
+    {
+        return dao.getConfigurationsForYearMonth(yearMonth);
     }
 
     @RequestMapping(value="/{yearMonthNumber}", method=RequestMethod.DELETE)
     public void deleteConfigurationsForYearMonth(@PathVariable("yearMonthNumber") String yearMonth) {
         try {
-
+            System.err.println("HERE deleteConfigurationsForYearMonth");
         } catch (Exception ex) {
-
+            throw new RuntimeException(ex);
         }
     }
 
     @RequestMapping(value="/{yearMonthNumber}", method={ RequestMethod.POST, RequestMethod.PUT })
     public void addConfigurationForYearMonth(
             @PathVariable("yearMonthNumber") String yearMonth,
-            @RequestBody ConfigValue value) {
+            @RequestBody ConfigValue value)
+    {
+        System.err.println("HERE addConfigurationForYearMonth");
 
     }
 }
