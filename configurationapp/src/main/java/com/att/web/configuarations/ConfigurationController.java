@@ -29,11 +29,7 @@ public class ConfigurationController {
 
     @RequestMapping(value="/{yearMonthNumber}", method=RequestMethod.DELETE)
     public void deleteConfigurationsForYearMonth(@PathVariable("yearMonthNumber") String yearMonth) {
-        try {
-            System.err.println("HERE deleteConfigurationsForYearMonth");
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+        dao.removeAllConfigurationsForYearMonth(yearMonth);
     }
 
     @RequestMapping(value="/{yearMonthNumber}", method={ RequestMethod.POST, RequestMethod.PUT })
@@ -41,7 +37,6 @@ public class ConfigurationController {
             @PathVariable("yearMonthNumber") String yearMonth,
             @RequestBody ConfigValue value)
     {
-        System.err.println("HERE addConfigurationForYearMonth");
-
+        dao.addConfiguration(yearMonth, value);
     }
 }

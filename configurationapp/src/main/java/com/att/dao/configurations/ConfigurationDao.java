@@ -39,36 +39,41 @@ public class ConfigurationDao {
         createConfigValue("G");
         createConfigValue("H");
         currentConfigurations = new HashMap<>();
-        currentConfigurations.put("012018", Arrays.asList(
-            allConfigValues.get(0),
-            allConfigValues.get(1),
-            allConfigValues.get(2),
-            allConfigValues.get(3)
-        ));
-        currentConfigurations.put("022018", Arrays.asList(
-            allConfigValues.get(0),
-            allConfigValues.get(2),
-            allConfigValues.get(5),
-            allConfigValues.get(6),
-            allConfigValues.get(7)
-        ));
+        ArrayList<ConfigValue> configValues = new ArrayList<>();
+        configValues.add(allConfigValues.get(0));
+        configValues.add(allConfigValues.get(1));
+        configValues.add(allConfigValues.get(2));
+        configValues.add(allConfigValues.get(3));
+        currentConfigurations.put("012018", configValues);
+        configValues = new ArrayList<>();
+        configValues.add(allConfigValues.get(0));
+        configValues.add(allConfigValues.get(2));
+        configValues.add(allConfigValues.get(5));
+        configValues.add(allConfigValues.get(6));
+        configValues.add(allConfigValues.get(7));
+        currentConfigurations.put("022018", configValues);
     }
 
     public List<ConfigValue> getConfigurationsForYearMonth(String yearMonth) {
         List<ConfigValue> result = currentConfigurations.get(yearMonth);
         if (result == null) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
         return result;
     }
 
-    public void addConfiguration(String yearMonth, ConfigValue value) {
-        int newId = idProvider.getNextId();
-
+    public void addConfiguration(String yearMonth, ConfigValue prototype) {
+        ConfigValue newValue = createConfigValue(prototype.getConfigName());
+        List<ConfigValue> values = currentConfigurations.get(yearMonth);
+        if (values == null) {
+            values = new ArrayList<>();
+            currentConfigurations.put(yearMonth, values);
+        }
+        values.add(newValue);
     }
 
     public void removeAllConfigurationsForYearMonth(String yearMonth) {
-
+        currentConfigurations.remove(yearMonth);
     }
 
     private ConfigValue createConfigValue(String name) {
