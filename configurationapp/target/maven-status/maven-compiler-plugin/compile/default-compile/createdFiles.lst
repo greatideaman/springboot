@@ -1,0 +1,5 @@
+com/att/dao/configurations/ConfigurationDao.class
+com/att/ConfigurationApp.class
+com/att/web/configuarations/ConfigurationController.class
+com/att/dao/configurations/ConfigurationDao$IdProvider.class
+com/att/data/configurations/ConfigValue.class
