@@ -8,18 +8,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class ConfigurationDao {
     private class IdProvider {
-        private int currentId;
+    	// Uses CAS and better than synchronized
+        private AtomicInteger currentId;
 
         public IdProvider() {
-            currentId = 0;
+            currentId = new AtomicInteger(0);
         }
 
         public int getNextId() {
-            return this.currentId++;
+            return this.currentId.incrementAndGet();
         }
     }
 
@@ -46,15 +48,19 @@ public class ConfigurationDao {
         int newId = idProvider.getNextId();
         value.setConfigId(newId);
         
-        if (currentConfigurations.containsKey(yearMonth)) {
-        	currentConfigurations.get(yearMonth).add(value);
-        }
-        else {
-        	
-        	List<ConfigValue> configValues = new ArrayList<ConfigValue>();
-        	configValues.add(value);
-        	
-        	currentConfigurations.put(yearMonth, configValues);
+        // multiple threads can try to access the map at the same time
+        synchronized(currentConfigurations)
+        {
+        	if (currentConfigurations.containsKey(yearMonth)) {
+        		currentConfigurations.get(yearMonth).add(value);
+        	}
+        	else {
+
+        		List<ConfigValue> configValues = new ArrayList<ConfigValue>();
+        		configValues.add(value);
+
+        		currentConfigurations.put(yearMonth, configValues);
+        	}
         }
     }
 
@@ -65,8 +71,10 @@ public class ConfigurationDao {
     
     public void removeSingleConfigurationForYearMonth(String yearMonth, int configId) {
 
-    	if (currentConfigurations.containsKey(yearMonth)) {
-    		currentConfigurations.get(yearMonth).removeIf(cv -> (cv.getConfigId() == configId));
+    	synchronized(currentConfigurations) {
+    		if (currentConfigurations.containsKey(yearMonth)) {
+    			currentConfigurations.get(yearMonth).removeIf(cv -> (cv.getConfigId() == configId));
+    		}
     	}
     }
 }

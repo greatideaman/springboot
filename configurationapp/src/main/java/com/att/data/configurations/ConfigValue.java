@@ -31,23 +31,4 @@ public class ConfigValue {
     public int getConfigId() {
         return this.configId;
     }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        
-        if (!(o instanceof ConfigValue))
-            return false;
-        
-        ConfigValue other = (ConfigValue)o;
-        return this.configId == other.configId;
-    }
-    
-    @Override
-    public final int hashCode() {
-        int result = 17;
-        result = 31 * result + configId;
-        return result;
-    }
 }
