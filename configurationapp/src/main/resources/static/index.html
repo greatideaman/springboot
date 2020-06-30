@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Configuration App</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="js/app.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
     <h1>Welcome To The Configuration App</h1>
@@ -35,7 +36,9 @@
             </table>
         </div>
         <div class="controls">
-            <button id="saveButton">Save Configurations</button>
+        	<button id="addConfig">Add Configuration</button>
+        	<button id="deleteConfig">Delete Configuration</button>
+        	<button id="deleteAllConfigs">Delete All Configurations</button>
         </div>
     </div>
     <script>
