@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>configurationapp</name>
-    <description></description>
+    <description>CRUD app for configurations stored based on month and year</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -38,6 +38,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

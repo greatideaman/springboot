@@ -2,46 +2,49 @@
 <html>
 <head>
     <title>Configuration App</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="js/app.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
-    <h1>Welcome To The Configuration App</h1>
-    <div class="content">
-        <div class="controls">
-            <select id="timePeriod">
-                <option value="012018">Jan 2018</option>
-                <option value="022018">Feb 2018</option>
-                <option value="032018">Mar 2018</option>
-                <option value="042018">Apr 2018</option>
-                <option value="052018">May 2018</option>
-                <option value="062018">Jun 2018</option>
-                <option value="072018">Jul 2018</option>
-            </select>
-        </div>
-        <div class="config-table-wrapper">
-            <table id="configTable">
-                <thead>
-                    <tr>
-                        <td>Configuration Id</td>
-                        <td>Configuration Name</td>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
-        <div class="controls">
-            <button id="saveButton">Save Configurations</button>
-        </div>
+<h1>Welcome To The Configuration App</h1>
+<div class="content">
+    <div class="controls">
+        <select id="timePeriod" onchange="app.getData();">
+            <option value="012023">Jan 2023</option>
+            <option value="022023">Feb 2023</option>
+            <option value="032023">Mar 2023</option>
+        </select>
     </div>
-    <script>
-        $(document).ready(function() {
-            app.init();
-        })
-    </script>
+    <div class="config-table-wrapper">
+        <table id="configTable">
+            <thead>
+            <tr>
+                <td>Configuration Id</td>
+                <td>Configuration Name</td>
+                <td>Remove</td>
+            </tr>
+            </thead>
+            <tbody id="configdata"></tbody>
+        </table>
+    </div>
+    <div class="controls">
+        <h1>Add New Configurations</h1>
+        <input type="text" id="configid" name="addedConfigId" placeholder="enter id" />
+        <input type="text" id="configname" name="addedConfigName" placeholder="enter name" />
+        <button id="saveButton" onclick="app.insertData()">Save Configurations</button>
+    </div>
+    <div class="controls">
+        <h1>Delete All Configurations</h1>
+        <button id="deleteButton" onclick="app.deleteData()">Delete Configurations</button>
+    </div>
+</div>
+<script>
+            $(document).ready(function () {
+                app.init();
+            });
+        </script>
 </body>
 </html>
